@@ -16,7 +16,8 @@ FLAGS = 0
 NEXTLEVEL = pygame.event.Event(pygame.USEREVENT+1)
 
 def play_sound(sound):
-    pygame.mixer.Sound(sound).play()
+    if not pygame.mixer.get_busy():
+        pygame.mixer.Sound(sound).play()
 def make_level(level, player, entities, platforms):
     x = y = 0
     for row in level:
@@ -43,6 +44,7 @@ def main():
     screen = display.set_mode(DISPLAY, FLAGS, DEPTH)
     display.set_caption("Sonar_Mario")
     timer = time.Clock()
+    #display.toggle_fullscreen()
 
     up = down = left = right = False
     bg = Surface((32,32))
