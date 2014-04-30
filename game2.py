@@ -18,6 +18,7 @@ NEXTLEVEL = pygame.event.Event(pygame.USEREVENT+1)
 def play_sound(sound):
     if not pygame.mixer.get_busy():
         pygame.mixer.Sound(sound).play()
+        print pygame.mixer.get_busy()
 def make_level(level, player, entities, platforms):
     x = y = 0
     for row in level:
@@ -232,7 +233,7 @@ class Sonar(Entity):
         #LEFTRIGHT is a int multiplier (1 or -1) that determines the LR direction of the sonar. UPDOWN is the same for the vertical
         Entity.__init__(self)
         self.snum = sonar_num
-        self.speed = 9
+        self.speed = 6
 
         self.init_time = time.get_ticks()
 
