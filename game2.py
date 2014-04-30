@@ -44,7 +44,7 @@ def main():
     screen = display.set_mode(DISPLAY, FLAGS, DEPTH)
     display.set_caption("Sonar_Mario")
     timer = time.Clock()
-    #display.toggle_fullscreen()
+    display.toggle_fullscreen()
 
     up = down = left = right = False
     bg = Surface((32,32))
@@ -58,6 +58,7 @@ def main():
     current_level = 0
     #get all of the level files
     levelnames = glob.glob('data/*.lvl')
+    levelnames = sorted(levelnames)
     for l in levelnames:
         level = [line.strip() for line in open(l)]
         levels.append(level)
