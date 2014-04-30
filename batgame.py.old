@@ -1,0 +1,104 @@
+import sys, pygame
+import os
+
+def load_png(name):
+    """ Load image and return image object"""
+    fullname = os.path.join('data', name)
+    try:
+        image = pygame.image.load(fullname)
+        if image.get_alpha() is None:
+            image = image.convert()
+        else:
+            image = image.convert_alpha()
+    except pygame.error, message:
+        print 'Cannot load image:', fullname
+        raise SystemExit, message
+    return image, image.get_rect()
+
+class Bat(pygame.sprite.Sprite):
+
+    def __init__(self, pos=[0,0]):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_png("bat.gif")
+        screen = pygame.display.get_surface()
+        self.area = screen.get_rect()
+        self.pos = pos
+        self.speed = 1
+        self.reinit()
+
+    def update(self):
+        if self.MOVE_STATE is not "STOP":
+            newpos = self.rect.move(self.pos)
+            if self.area.contains(newpos):
+                self.rect = newpos
+        pygame.event.pump()
+
+    def reinit(self):
+        self.MOVE_STATE = "STOP"
+        self.pos = [0,0]
+
+    def moveup(self):
+        self.pos[1] = self.pos[1] - (self.speed)
+        self.MOVE_STATE = "UP"
+
+    def movedown(self):
+        self.pos[1] = self.pos[1] + (self.speed)
+        self.MOVE_STATE = "DOWN"
+
+    def moveleft(self):
+        self.pos[0] = self.pos[0] - (self.speed)
+        self.MOVE_STATE = "LEFT"
+
+    def moveright(self):
+        self.pos[0] = self.pos[0] + (self.speed)
+        self.MOVE_STATE = "RIGHT"
+
+
+def play_sound(sound):
+    pygame.mixer.Sound(sound).play()
+
+
+def main():
+    pygame.init()
+    pygame.mixer.pre_init()
+    pygame.mixer.init()
+
+    size = width, height = 640, 480
+    screen = pygame.display.set_mode(size)
+    black = 0, 0, 0
+    pygame.display.set_caption("Sonar_Mario")
+
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background.fill(black)
+
+    #game logic
+    bat = Bat([0,0])
+
+    batsprite = pygame.sprite.RenderPlain(bat)
+
+    screen.blit(background, (0,0))
+    pygame.display.flip()
+
+    clock = pygame.time.Clock()
+    #game loop
+    while 1:
+        clock.tick(120) #60fps max
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    bat.moveup()
+                if event.key == pygame.K_DOWN:
+                    bat.movedown()
+                if event.key == pygame.K_LEFT:
+                    bat.moveleft()
+                if event.key == pygame.K_RIGHT:
+                    bat.moveright()
+            screen.blit(background, bat.rect, bat.rect)
+            batsprite.update()
+            batsprite.draw(screen)
+            pygame.display.flip()
+
+if __name__ == '__main__': main()
